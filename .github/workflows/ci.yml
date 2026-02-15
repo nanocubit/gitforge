@@ -2,22 +2,17 @@
 
 on:
   push:
-    branches: [ "main", "work" ]
+    branches: [ "main", "master", "work" ]
   pull_request:
-    branches: [ "main" ]
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [ "main", "master" ]
 
 jobs:
   frontend:
-    name: Frontend (Vue/Vite)
+    name: Frontend build
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: gitforge
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,10 +21,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: npm
-          cache-dependency-path: gitforge/package-lock.json
 
-      - name: Install dependencies (npm ci if lockfile exists, else npm install)
+      - name: Install deps
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -41,27 +34,21 @@ jobs:
         run: npm run build
 
   rust:
-    name: Rust (fmt + clippy + test)
+    name: Rust checks
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: gitforge
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Rust stable
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
 
-      - name: Cache cargo
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: gitforge
-
-      - name: Format check
+      - name: Format
         run: cargo fmt --all -- --check
 
       - name: Clippy
