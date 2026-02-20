@@ -9,6 +9,7 @@ name = "gitforge"
 path = "src/bin/gitforge.rs"
 
 [dependencies]
+ant-core = { path = "ant-core" }
 tauri = { version = "2.0", features = ["api-all", "webview"] }
 git2 = "0.18"
 serde = { version = "1.0", features = ["derive"] }
