@@ -37,7 +37,6 @@ async fn voice_process(text: String, db_path: String) -> Result<String, String> 
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![mcp_call, voice_process])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
